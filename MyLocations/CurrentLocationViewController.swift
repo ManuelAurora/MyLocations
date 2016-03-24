@@ -14,8 +14,8 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     // MARK: ***** PROPERTIES *****
     let locationManager = CLLocationManager()
     
-    var lastLocation:      CLLocation?
-    var lastLocationError: NSError
+    var location:      CLLocation?
+    var lastLocationError: NSError?
     
     var updatingLocation = false
    
@@ -43,9 +43,8 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         default: break
         }
         
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        locationManager.startUpdatingLocation()
+       startLocationManager()
+       updateLabels()
     }
     
     //MARK: ***** METHODS *****
@@ -70,25 +69,90 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     }
     
     func updateLabels() {
-        guard let location = lastLocation else { tagButton.hidden = true; messageLabel.text = "Tap 'Get My Location' to Start"; return }
-        
-        latitudeLabel.text = String(format: "%.8f", location.coordinate.latitude)
-        longitudeLabel.text = String(format: "%.8f", location.coordinate.longitude)
-        tagButton.hidden = false
-        messageLabel.text = ""
+        if let location = location {
+            latitudeLabel.text = String(format: "%.8f", location.coordinate.latitude)
+            longitudeLabel.text = String(format: "%.8f", location.coordinate.longitude)
+            tagButton.hidden = false
+            messageLabel.text = ""
+        } else {
+            latitudeLabel.text = ""
+            longitudeLabel.text = ""
+            addressLabel.text = ""
+            tagButton.hidden = true
+            
+            var statusMessage: String = ""
+            
+            if let error = lastLocationError {
+                if error.domain == kCLErrorDomain && error.code == CLError.Denied.rawValue {
+                    statusMessage = "Location Servises Disabled"
+                }
+                else {
+                    statusMessage = "Error Getting Location"
+                }
+            }
+            else if !CLLocationManager.locationServicesEnabled() {
+                statusMessage = "Location Services Disabled"
+            }
+            else if updatingLocation {
+                statusMessage = "Searching..."
+            }
+            else {
+                messageLabel.text = "Tap 'Get My Location' to Start"
+            }
+            
+            messageLabel.text = statusMessage
+        }
+    }
+    
+    func stopLocationManager() {
+        guard updatingLocation else { return }
+        locationManager.stopUpdatingLocation()
+        locationManager.delegate = nil
+        updatingLocation = false
+    }
+    
+    func startLocationManager() {
+        guard CLLocationManager.locationServicesEnabled() else { return }
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager.startUpdatingLocation()
+        updatingLocation = true
     }
     
     // MARK: ***** DELEGATE FUNCS *****
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         print("didFailWithError\(error)")
+        
+        switch error.code
+        {
+        case CLError.LocationUnknown.rawValue: return
+        default: break
+        }
+        
+        lastLocationError = error
+        
+        stopLocationManager()
+        updateLabels()
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let newLocation = locations.last!
         print("didUpdateLocations \(newLocation)")
         
-        lastLocation = newLocation
-        updateLabels()
+        if newLocation.timestamp.timeIntervalSinceNow < -5 { return }
+        
+        if newLocation.horizontalAccuracy < 0 { return }
+        
+        if location == nil  || location?.horizontalAccuracy > newLocation.horizontalAccuracy {
+            lastLocationError = nil
+            location = newLocation
+            updateLabels()
+        }
+        
+        if newLocation.horizontalAccuracy <= locationManager.desiredAccuracy {
+            print("We're done!")
+            stopLocationManager()
+        }
     }
 
 }
