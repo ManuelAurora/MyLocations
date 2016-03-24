@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CurrentLocationViewController
 //  MyLocations
 //
 //  Created by Мануэль on 24.03.16.
@@ -43,14 +43,24 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         default: break
         }
         
-       startLocationManager()
-       updateLabels()
+        if updatingLocation {
+            stopLocationManager()
+        }
+        else {
+            location = nil
+            lastLocationError = nil
+            startLocationManager()
+        }
+        updateLabels()
+        configureGetButton()
+        
     }
     
     //MARK: ***** METHODS *****
     override func viewDidLoad() {
         super.viewDidLoad()
         updateLabels()
+        configureGetButton()
     }
 
     override func didReceiveMemoryWarning() {
@@ -70,15 +80,15 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     
     func updateLabels() {
         if let location = location {
-            latitudeLabel.text = String(format: "%.8f", location.coordinate.latitude)
+            latitudeLabel.text  = String(format: "%.8f", location.coordinate.latitude)
             longitudeLabel.text = String(format: "%.8f", location.coordinate.longitude)
-            tagButton.hidden = false
+            tagButton.hidden  = false
             messageLabel.text = ""
         } else {
-            latitudeLabel.text = ""
+            latitudeLabel.text  = ""
             longitudeLabel.text = ""
             addressLabel.text = ""
-            tagButton.hidden = true
+            tagButton.hidden  = true
             
             var statusMessage: String = ""
             
@@ -119,6 +129,15 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         updatingLocation = true
     }
     
+    func configureGetButton() {
+        if updatingLocation {
+            getButton.setTitle("Stop", forState: .Normal)
+        }
+        else {
+            getButton.setTitle("Get My Location", forState: .Normal)
+        }
+    }
+    
     // MARK: ***** DELEGATE FUNCS *****
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         print("didFailWithError\(error)")
@@ -133,6 +152,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         
         stopLocationManager()
         updateLabels()
+        configureGetButton()
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -147,11 +167,13 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             lastLocationError = nil
             location = newLocation
             updateLabels()
+            configureGetButton()
         }
         
         if newLocation.horizontalAccuracy <= locationManager.desiredAccuracy {
             print("We're done!")
             stopLocationManager()
+            configureGetButton()
         }
     }
 
