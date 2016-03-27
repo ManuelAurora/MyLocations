@@ -4,7 +4,7 @@
 //
 //  Created by Мануэль on 24.03.16.
 //  Copyright © 2016 AuroraInterplay. All rights reserved.
-//
+//89252385789
 
 import UIKit
 import CoreLocation
@@ -15,6 +15,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     let geocoder        = CLGeocoder()
     let locationManager = CLLocationManager()
     
+    var timer:              NSTimer?
     var location:           CLLocation?
     var placemark:          CLPlacemark?
     var lastLocationError:  NSError?
@@ -163,6 +164,9 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     func stopLocationManager() {
         guard updatingLocation else { return }
         
+        if let timer = timer {
+            timer.invalidate()
+        }
         updatingLocation = false
         locationManager.delegate = nil
         locationManager.stopUpdatingLocation()
@@ -177,6 +181,8 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         
         locationManager.startUpdatingLocation()
+        
+        timer = NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: #selector(self.didTimeOut), userInfo: nil, repeats: false)
     }
     
     func configureGetButton() {
@@ -185,6 +191,19 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         } else {
             getButton.setTitle("Get My Location", forState: .Normal)
         }
+    }
+    
+    func didTimeOut() {
+        print("***Time out")
+        
+        guard location == nil else { return }
+        
+        stopLocationManager()
+        
+        lastLocationError = NSError(domain: "MyLocationsErrorDomain", code: 1, userInfo: nil)
+        
+        updateLabels()
+        configureGetButton()
     }
     
     // MARK: ***** DELEGATE FUNCS *****
@@ -213,6 +232,12 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         
         if newLocation.horizontalAccuracy < 0 { return }
         
+        var distance = CLLocationDistance(DBL_MAX)
+        
+        if let location = location {
+            distance = newLocation.distanceFromLocation(location)
+        }
+        
         if location == nil || location!.horizontalAccuracy > newLocation.horizontalAccuracy {
             
             location          = newLocation
@@ -227,6 +252,10 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             
             configureGetButton()
             stopLocationManager()
+        }
+        
+        if distance > 0 {
+            performingReverseGeocoding = false
         }
         
         if !performingReverseGeocoding {
@@ -249,6 +278,17 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                 self.updateLabels()
                 self.performingReverseGeocoding = false
             })
+        }
+        else if distance < 1.0 {
+            let timeInterval = newLocation.timestamp.timeIntervalSinceDate(location!.timestamp)
+            
+            if timeInterval > 10 {
+                print("*** Force done")
+                
+                stopLocationManager()
+                updateLabels()
+                configureGetButton()
+            }
         }
     }
 }
