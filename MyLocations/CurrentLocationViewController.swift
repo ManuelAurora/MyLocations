@@ -276,6 +276,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                 }
                 
                 self.updateLabels()
+                self.configureGetButton()
                 self.performingReverseGeocoding = false
             })
         }

@@ -12,6 +12,7 @@
 		644F169F1CA3C4D9002BB667 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 644F169D1CA3C4D9002BB667 /* Main.storyboard */; };
 		644F16A11CA3C4D9002BB667 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 644F16A01CA3C4D9002BB667 /* Assets.xcassets */; };
 		644F16A41CA3C4D9002BB667 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 644F16A21CA3C4D9002BB667 /* LaunchScreen.storyboard */; };
+		64FEEB721CA91C5E007EBE4C /* LocationDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64FEEB711CA91C5E007EBE4C /* LocationDetailsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		644F16A01CA3C4D9002BB667 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		644F16A31CA3C4D9002BB667 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		644F16A51CA3C4D9002BB667 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		64FEEB711CA91C5E007EBE4C /* LocationDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationDetailsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			children = (
 				644F16991CA3C4D9002BB667 /* AppDelegate.swift */,
 				644F169B1CA3C4D9002BB667 /* CurrentLocationViewController.swift */,
+				64FEEB711CA91C5E007EBE4C /* LocationDetailsViewController.swift */,
 				644F169D1CA3C4D9002BB667 /* Main.storyboard */,
 				644F16A01CA3C4D9002BB667 /* Assets.xcassets */,
 				644F16A21CA3C4D9002BB667 /* LaunchScreen.storyboard */,
@@ -135,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64FEEB721CA91C5E007EBE4C /* LocationDetailsViewController.swift in Sources */,
 				644F169C1CA3C4D9002BB667 /* CurrentLocationViewController.swift in Sources */,
 				644F169A1CA3C4D9002BB667 /* AppDelegate.swift in Sources */,
 			);
@@ -284,6 +288,7 @@
 				644F16AA1CA3C4D9002BB667 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
