@@ -12,7 +12,8 @@ import CoreLocation
 class LocationDetailsViewController: UITableViewController
 {
     // MARK: ***** PROPERTIES *****
-    var coordinate = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    var categoryName = "No Category"
+    var coordinate   = CLLocationCoordinate2D(latitude: 0, longitude: 0)
     
     var placemark: CLPlacemark?
     
@@ -33,6 +34,14 @@ class LocationDetailsViewController: UITableViewController
     @IBOutlet weak var descriptionTextView: UITextView!
     
     // MARK: ***** ACTIONS *****
+    @IBAction func categoryPickerDidPickCategory(segue: UIStoryboardSegue) {
+        let controller = segue.sourceViewController as! CategoryPickerViewController
+        
+        categoryName = controller.selectedCategoryName
+        categoryLabel.text = categoryName
+    }
+    
+
     @IBAction func done() {
         dismissViewControllerAnimated(true, completion: nil)
     }
@@ -45,11 +54,10 @@ class LocationDetailsViewController: UITableViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        categoryLabel.text       = categoryName
         descriptionTextView.text = ""
-        categoryLabel.text = ""
-        
-        latitudeLabel.text = String(format: "%.8f", coordinate.latitude)
-        longitudeLabel.text = String(format: "%.8f", coordinate.longitude)
+        latitudeLabel.text       = String(format: "%.8f", coordinate.latitude)
+        longitudeLabel.text      = String(format: "%.8f", coordinate.longitude)
         
         if let placemark = placemark {
             addressLabel.text = stringFromPlacemark(placemark)
@@ -112,4 +120,12 @@ class LocationDetailsViewController: UITableViewController
             return 44
         }
     }
+    
+    //MARK: ***** SEGUES *****
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "PickCategory" {
+            let controller = segue.destinationViewController as! CategoryPickerViewController
+            controller.selectedCategoryName = categoryName
+        }
+    }       
 }

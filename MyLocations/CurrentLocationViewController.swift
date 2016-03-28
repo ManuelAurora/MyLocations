@@ -130,9 +130,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                 addressLabel.text = "Error Finding Address"
             } else {
                 addressLabel.text = "No Address Found"
-            }
-            
-            
+            }            
         } else {
             tagButton.hidden    = true
             addressLabel.text   = ""
@@ -264,9 +262,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             
             geocoder.reverseGeocodeLocation(newLocation, completionHandler: {
                 (placemarks, error) in
-                
-                print("*** Found placemarks: \(placemarks), error: \(error)")
-                
+                                              
                 self.lastLocationError = error
                 if error == nil, let p = placemarks where !p.isEmpty {
                     self.placemark = p.last!
