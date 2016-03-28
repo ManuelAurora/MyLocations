@@ -226,7 +226,6 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let newLocation = locations.last!
-        print("didUpdateLocations \(newLocation)")
         
         if newLocation.timestamp.timeIntervalSinceNow < -5 { return }
         
@@ -290,6 +289,18 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                 updateLabels()
                 configureGetButton()
             }
+        }
+    }
+    
+    //MARK: ***** SEGUES *****
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "TagLocation" {
+            
+            let navigationController = segue.destinationViewController        as! UINavigationController
+            let controller           = navigationController.topViewController as! LocationDetailsViewController
+            
+            controller.placemark  = placemark
+            controller.coordinate = location!.coordinate            
         }
     }
 }
