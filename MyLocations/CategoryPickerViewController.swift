@@ -84,5 +84,5 @@ class CategoryPickerViewController: UITableViewController
                 selectedCategoryName = categories[indexPath.row]
             }
         }
-    }    
+    }
 }
