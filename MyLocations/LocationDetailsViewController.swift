@@ -20,11 +20,13 @@ class LocationDetailsViewController: UITableViewController
     
     private let dateFormatter: NSDateFormatter = {
         let formatter = NSDateFormatter()
+        
         formatter.dateStyle = .MediumStyle
         formatter.timeStyle = .ShortStyle
-        print("Formatter created")
+        
         return formatter
     }()
+    
     
     // MARK: ***** OUTLETS *****
     @IBOutlet weak var dateLabel:           UILabel!
@@ -39,7 +41,7 @@ class LocationDetailsViewController: UITableViewController
         let controller = segue.sourceViewController as! CategoryPickerViewController
         
         categoryName = controller.selectedCategoryName
-        categoryLabel.text = categoryName
+        categoryLabel.text = categoryName        
     }
     
     @IBAction func done() {
