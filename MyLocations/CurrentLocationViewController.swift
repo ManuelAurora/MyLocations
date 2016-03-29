@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import CoreData
 
 class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
 {
@@ -18,8 +19,10 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     var timer:              NSTimer?
     var location:           CLLocation?
     var placemark:          CLPlacemark?
+    var managedObjContext:  NSManagedObjectContext!
     var lastLocationError:  NSError?
     var lastGeocodingError: NSError?
+   
     
     var updatingLocation           = false
     var performingReverseGeocoding = false
@@ -295,8 +298,9 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             let navigationController = segue.destinationViewController        as! UINavigationController
             let controller           = navigationController.topViewController as! LocationDetailsViewController
             
-            controller.placemark  = placemark
-            controller.coordinate = location!.coordinate            
+            controller.placemark            = placemark
+            controller.coordinate           = location!.coordinate
+            controller.managedObjContext = managedObjContext
         }
     }
 }

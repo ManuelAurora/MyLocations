@@ -41,7 +41,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        let tabBarController = window!.rootViewController as! UITabBarController
+        
+        guard let tabBarViewControllers = tabBarController.viewControllers else { return true }
+        
+        let currentLocationViewController = tabBarViewControllers[0] as! CurrentLocationViewController
+        
+        currentLocationViewController.managedObjContext = managedOjectContext
+        
         return true
     }
 

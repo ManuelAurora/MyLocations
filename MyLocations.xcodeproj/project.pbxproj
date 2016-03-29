@@ -72,8 +72,8 @@
 				64E227B91CAAA5980090E572 /* Controllers */,
 				644F169B1CA3C4D9002BB667 /* CurrentLocationViewController.swift */,
 				64FEEB711CA91C5E007EBE4C /* LocationDetailsViewController.swift */,
-				64E227BA1CAAA5AA0090E572 /* Model */,
 				64FEEB731CA95D97007EBE4C /* CategoryPickerViewController.swift */,
+				64E227BA1CAAA5AA0090E572 /* Model */,
 				64E227BB1CAAA5B20090E572 /* View */,
 				64E227BE1CAAA5F60090E572 /* Support files */,
 			);
