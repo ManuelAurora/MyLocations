@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import Dispatch
 
 class LocationDetailsViewController: UITableViewController
 {
@@ -41,13 +42,16 @@ class LocationDetailsViewController: UITableViewController
         categoryLabel.text = categoryName
     }
     
-
     @IBAction func done() {
         
         let hudView = HudView.hudInView(navigationController!.view, animated: true)
         hudView.text = "Tagged"
         
-        //dismissViewControllerAnimated(true, completion: nil)
+        let delay = 0.6
+        
+        afterDelay(delay) { 
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
     @IBAction func cancel() {
