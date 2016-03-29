@@ -19,11 +19,13 @@ class HudView: UIView
         view.addSubview(hudView)
         view.userInteractionEnabled = false
         
+        hudView.showAnimated(animated)
+        
         return hudView
     }
     
     override func drawRect(rect: CGRect) {
-        let boxWidth: CGFloat = 96
+        let boxWidth:  CGFloat = 96
         let boxHeight: CGFloat = 96
         
         let boxRect = CGRect(
@@ -36,5 +38,36 @@ class HudView: UIView
         
         UIColor(white: 0.3, alpha: 0.8).setFill()
         roundedRect.fill()
+        
+        let attribs = [ NSFontAttributeName: UIFont.systemFontOfSize(16),
+                        NSForegroundColorAttributeName: UIColor.whiteColor() ]
+        
+        let textSize = text.sizeWithAttributes(attribs)
+        let textPoint = CGPoint(
+            x: center.x - round(textSize.width / 2),
+            y: center.y - round(textSize.height / 2) + boxHeight / 4)
+        
+        text.drawAtPoint(textPoint, withAttributes: attribs)
+        
+        guard let image = UIImage(named: "Checkmark") else { return }
+        
+        let imagePoint = CGPoint(
+            x: center.x - round(image.size.width / 2),
+            y: center.y - round(image.size.height / 2) - boxHeight / 8)
+        
+        image.drawAtPoint(imagePoint)
+    }
+    
+    func showAnimated(animated: Bool) {
+        guard animated else { return }
+        
+        alpha = 0
+        
+        transform = CGAffineTransformMakeScale(1.3, 1.3)
+        
+        UIView.animateWithDuration(0.3) { 
+            self.alpha = 1
+            self.transform = CGAffineTransformIdentity
+        }
     }
 }
