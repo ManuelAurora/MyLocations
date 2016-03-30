@@ -60,8 +60,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         
         guard let tabBarViewControllers = tabBarController.viewControllers else { return true }
         
-        let currentLocationViewController = tabBarViewControllers[0] as! CurrentLocationViewController
+        let navigationController          = tabBarViewControllers[1]                as! UINavigationController
+        let currentLocationViewController = tabBarViewControllers[0]                as! CurrentLocationViewController
+        let locationsViewController       = navigationController.viewControllers[0] as! LocationsViewController
         
+        locationsViewController.managedObjectContext    = managedOjectContext
         currentLocationViewController.managedObjContext = managedOjectContext
         
         return true
