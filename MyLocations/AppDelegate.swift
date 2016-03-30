@@ -9,6 +9,13 @@
 import UIKit
 import CoreData
 
+let myManagedObjectContextSaveDidFailNotification = "myManagedObjectContextSaveDidFailNotification"
+
+func fatalCoreDataError(error: ErrorType) {
+    print("*** Fatal error: \(error)")
+    NSNotificationCenter.defaultCenter().postNotificationName(myManagedObjectContextSaveDidFailNotification, object: nil)
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate
 {
@@ -16,12 +23,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         
         guard let modelURL = NSBundle.mainBundle().URLForResource("DataModel", withExtension: "momd") else { fatalError("Could not find data model in app bundle") }
         
-        guard let model = NSManagedObjectModel(contentsOfURL: modelURL) else { fatalError("Error initializing model from: \(modelURL)") }
+        guard let model    = NSManagedObjectModel(contentsOfURL: modelURL)                            else { fatalError("Error initializing model from: \(modelURL)") }
         
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
         
         let documentsDirectory = urls[0]
+        
         let storeURL           = documentsDirectory.URLByAppendingPathComponent("DataStore.sqlite")
+        
+        /*
+         /Users/manuel/Library/Developer/CoreSimulator/Devices/990F9CE8-9068-48C6-95A8-149ECCA82040/data/Containers/Data/Application/9E4948BD-8FEC-4A25-9F4F-7918B730DCD0/Documents/DataStore.sqlite
+         */
         
         do {
             let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
@@ -41,6 +53,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        
+        listenForFatalCoreDataNotifications()
         
         let tabBarController = window!.rootViewController as! UITabBarController
         
@@ -75,6 +89,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    func listenForFatalCoreDataNotifications() {
+        NSNotificationCenter.defaultCenter().addObserverForName(myManagedObjectContextSaveDidFailNotification, object: nil, queue: NSOperationQueue.mainQueue()) { _ in
+            
+            let alert = UIAlertController(title: "Internal Error", message: "There was a fatal error in the app and it cannot continue.\n\n" + "Press OK to terminate the app.", preferredStyle: .Alert)
+            
+            let action = UIAlertAction(title: "OK", style: .Default, handler: { _ in
+                
+                let exception = NSException(name: NSInternalInconsistencyException, reason: "Fatal Core Data error", userInfo: nil)
+                exception.raise()
+            })
+            
+            alert.addAction(action)
+            
+            self.viewControllerForShowingAlert().presentViewController(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func viewControllerForShowingAlert() -> UIViewController {
+        let rootViewController = self.window!.rootViewController!
+        
+        if let presentedViewController = rootViewController.presentedViewController {
+            return presentedViewController
+        } else {
+            return rootViewController
+        }
+    }
 }
 

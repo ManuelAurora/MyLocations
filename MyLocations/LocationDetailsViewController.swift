@@ -17,6 +17,7 @@ class LocationDetailsViewController: UITableViewController
     // MARK: ***** PROPERTIES *****
     var categoryName = "No Category"
     var coordinate   = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    var date         = NSDate()
     
     var placemark:            CLPlacemark?
     var managedObjContext: NSManagedObjectContext!
@@ -51,6 +52,21 @@ class LocationDetailsViewController: UITableViewController
         let hudView = HudView.hudInView(navigationController!.view, animated: true)
         hudView.text = "Tagged"
         
+        let location = NSEntityDescription.insertNewObjectForEntityForName("Location", inManagedObjectContext: managedObjContext) as! Location
+        
+        location.date                = date
+        location.placemark           = placemark
+        location.category            = categoryName
+        location.latitude            = coordinate.latitude
+        location.longitude           = coordinate.longitude
+        location.locationDescription = descriptionTextView.text
+        
+        do {
+            try managedObjContext.save()
+        } catch {
+            fatalCoreDataError(error)
+        }
+        
         let delay = 0.6
         
         afterDelay(delay) { 
@@ -82,7 +98,7 @@ class LocationDetailsViewController: UITableViewController
             addressLabel.text = "No Address Found"
         }
         
-        dateLabel.text = formatDate(NSDate())
+        dateLabel.text = formatDate(date)
     }
     
     func stringFromPlacemark(placemark: CLPlacemark) -> String {
