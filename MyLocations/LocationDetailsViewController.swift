@@ -15,14 +15,27 @@ import CoreLocation
 class LocationDetailsViewController: UITableViewController
 {
     // MARK: ***** PROPERTIES *****
-    var categoryName = "No Category"
-    var coordinate   = CLLocationCoordinate2D(latitude: 0, longitude: 0)
-    var date         = NSDate()
+    var categoryName    = "No Category"
+    var coordinate      = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    var date            = NSDate()
+    var descriptionText = ""
     
-    var placemark:            CLPlacemark?
+    var placemark:         CLPlacemark?
     var managedObjContext: NSManagedObjectContext!
+    var locationToEdit:    Location? {
+        didSet {
+            guard let location = locationToEdit else { return }
+            
+            date            = location.date
+            placemark       = location.placemark
+            coordinate      = CLLocationCoordinate2DMake(location.latitude, location.longitude)
+            categoryName    = location.category
+            descriptionText = location.locationDescription
+        }
+    }
     
     private let dateFormatter: NSDateFormatter = {
+        
         let formatter = NSDateFormatter()
         
         formatter.dateStyle = .MediumStyle
@@ -82,13 +95,17 @@ class LocationDetailsViewController: UITableViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let location = locationToEdit {
+            title = "Edit Location"
+        }
+        
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(LocationDetailsViewController.hideKeyboard(_:)))
         
         gestureRecognizer.cancelsTouchesInView = false
         tableView.addGestureRecognizer(gestureRecognizer)
         
         categoryLabel.text       = categoryName
-        descriptionTextView.text = ""
+        descriptionTextView.text = descriptionText
         latitudeLabel.text       = String(format: "%.8f", coordinate.latitude)
         longitudeLabel.text      = String(format: "%.8f", coordinate.longitude)
         

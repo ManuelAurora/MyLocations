@@ -25,27 +25,12 @@ class LocationsViewController: UITableViewController
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("LocationCell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("LocationCell", forIndexPath: indexPath) as! LocationCell
         
         let location = locations[indexPath.row]
         
-        let addressLabel      = cell.viewWithTag(101) as! UILabel
-        let descriptionLabel  = cell.viewWithTag(100) as! UILabel
+        cell.configureForLocation(location)
         
-        descriptionLabel.text = location.locationDescription
-        
-        if let placemark = location.placemark {
-            var text = ""
-            
-            if let s = placemark.subThoroughfare { text += s + " "  }
-            if let s = placemark.thoroughfare    { text += s + ", " }
-            if let s = placemark.locality        { text += s        }
-            
-            addressLabel.text = text
-        } else {
-            addressLabel.text = ""
-        }
-                
         return cell
     }
     
@@ -72,4 +57,21 @@ class LocationsViewController: UITableViewController
             fatalCoreDataError(error)
         }
     }
+    
+    //MARK: ***** SEGUES *****
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        guard segue.identifier == "EditLocation" else { return }
+        
+        let navigationController = segue.destinationViewController as! UINavigationController
+        let controller = navigationController.topViewController as! LocationDetailsViewController
+        
+        controller.managedObjContext = managedObjectContext
+        
+        guard let indexPath = tableView.indexPathForCell(sender as! UITableViewCell) else { return }
+        
+        let location = locations[indexPath.row]
+        controller.locationToEdit = location
+    }
+    
 }
