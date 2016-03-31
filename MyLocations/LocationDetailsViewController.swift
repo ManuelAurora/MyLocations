@@ -63,9 +63,17 @@ class LocationDetailsViewController: UITableViewController
     @IBAction func done() {
         
         let hudView = HudView.hudInView(navigationController!.view, animated: true)
-        hudView.text = "Tagged"
         
-        let location = NSEntityDescription.insertNewObjectForEntityForName("Location", inManagedObjectContext: managedObjContext) as! Location
+        
+        let location: Location
+        
+        if let temp = locationToEdit {
+            hudView.text = "Updated"
+            location = temp
+        } else {
+            hudView.text = "Tagged"
+            location = NSEntityDescription.insertNewObjectForEntityForName("Location", inManagedObjectContext: managedObjContext) as! Location
+        }
         
         location.date                = date
         location.placemark           = placemark

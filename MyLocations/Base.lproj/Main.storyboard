@@ -225,7 +225,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="8M7-KE-bwo" style="IBUITableViewCellStyleDefault" id="Kig-j0-hex">
-                                <rect key="frame" x="0.0" y="92" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Kig-j0-hex" id="DGd-2n-Bm7">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -292,7 +292,7 @@
                                 <connections>
                                     <outlet property="addressLabel" destination="9gk-SV-tFZ" id="Nvw-RM-yzm"/>
                                     <outlet property="descriptionLabel" destination="mlW-Uh-hdu" id="KmW-wn-scK"/>
-                                    <segue destination="b20-G6-CKi" kind="modal" id="Uz3-uj-o9j"/>
+                                    <segue destination="b20-G6-CKi" kind="modal" identifier="EditLocation" id="WPM-7A-vxI"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -445,6 +445,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Uz3-uj-o9j"/>
+        <segue reference="WPM-7A-vxI"/>
     </inferredMetricsTieBreakers>
 </document>
