@@ -54,6 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        
         listenForFatalCoreDataNotifications()
         
         let tabBarController = window!.rootViewController as! UITabBarController
@@ -63,6 +64,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         let navigationController          = tabBarViewControllers[1]                as! UINavigationController
         let currentLocationViewController = tabBarViewControllers[0]                as! CurrentLocationViewController
         let locationsViewController       = navigationController.viewControllers[0] as! LocationsViewController
+        
+        let _ = locationsViewController.view //Antibug
         
         locationsViewController.managedObjectContext    = managedOjectContext
         currentLocationViewController.managedObjContext = managedOjectContext
