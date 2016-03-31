@@ -64,13 +64,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         let navigationController          = tabBarViewControllers[1]                as! UINavigationController
         let currentLocationViewController = tabBarViewControllers[0]                as! CurrentLocationViewController
         let locationsViewController       = navigationController.viewControllers[0] as! LocationsViewController
-        
+        let mapViewController             = tabBarViewControllers[2]                as! MapViewController
         
         locationsViewController.managedObjectContext    = managedOjectContext
         
         let _ = locationsViewController.view //Antibug
 
-        currentLocationViewController.managedObjContext = managedOjectContext
+        mapViewController.managedObjectContext          = managedOjectContext
+        currentLocationViewController.managedObjContext = managedOjectContext       
         
         return true
     }
