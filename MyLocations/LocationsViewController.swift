@@ -23,13 +23,14 @@ class LocationsViewController: UITableViewController
         
         fetchRequest.entity = entity
         
-        let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
+        let sortDescriptor1 = NSSortDescriptor(key: "category", ascending: true)
+        let sortDescriptor2 = NSSortDescriptor(key: "date",     ascending: true)
         
-        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = [sortDescriptor1, sortDescriptor2]
         
         fetchRequest.fetchBatchSize = 20
         
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: nil, cacheName: "Locations")
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext, sectionNameKeyPath: "category", cacheName: "Locations")
         
         fetchedResultsController.delegate = self
         
@@ -53,11 +54,31 @@ class LocationsViewController: UITableViewController
         return cell
     }
     
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if editingStyle == .Delete {
+            let location = fetchedResultsController.objectAtIndexPath(indexPath) as! Location
+            
+            managedObjectContext.deleteObject(location)
+            
+            try! managedObjectContext.save()
+        }
+    }
+    
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return fetchedResultsController.sections!.count
+    }
+    
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionInfo = fetchedResultsController.sections![section]
+        return sectionInfo.name
+    }
+    
     //MARK: ***** METHODS *****
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        navigationItem.rightBarButtonItem = editButtonItem()
         performFetch()
     }
     
@@ -73,6 +94,7 @@ class LocationsViewController: UITableViewController
     deinit {
         fetchedResultsController.delegate = nil
     }
+    
     
     //MARK: ***** SEGUES *****
    
@@ -105,7 +127,9 @@ extension LocationsViewController: NSFetchedResultsControllerDelegate {
         case .Insert:
             print("*** NSFetchedResultsChangeInsert (object)")
             
-            tableView.insertRowsAtIndexPaths([indexPath!], withRowAnimation: .Fade)
+           // guard let indexPath = indexPath else { return }
+            
+            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Fade)
             
         case .Delete:
             print("*** NSFetchedResultsChangeDelete (object)")

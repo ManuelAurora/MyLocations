@@ -63,8 +63,7 @@ class LocationDetailsViewController: UITableViewController
     @IBAction func done() {
         
         let hudView = HudView.hudInView(navigationController!.view, animated: true)
-        
-        
+                
         let location: Location
         
         if let temp = locationToEdit {
