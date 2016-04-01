@@ -25,7 +25,7 @@
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="(Description goes here)" id="lx6-c2-EeP">
                                                     <rect key="frame" x="13" y="10" width="292" height="68"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -213,7 +213,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2rp-2q-LY9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1763" y="237"/>
+            <point key="canvasLocation" x="1691" y="535"/>
         </scene>
         <!--Category Picker View Controller-->
         <scene sceneID="z1p-xq-VsH">
@@ -225,7 +225,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="8M7-KE-bwo" style="IBUITableViewCellStyleDefault" id="Kig-j0-hex">
-                                <rect key="frame" x="0.0" y="92" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Kig-j0-hex" id="DGd-2n-Bm7">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
@@ -255,7 +255,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6YF-db-GAX" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="J5m-gj-7UT" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2203" y="237"/>
+            <point key="canvasLocation" x="2181" y="535"/>
         </scene>
         <!--Locations-->
         <scene sceneID="yyD-iK-FQN">
@@ -305,7 +305,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8Sb-rH-Ktn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1075" y="575"/>
+            <point key="canvasLocation" x="711" y="535"/>
         </scene>
         <!--Map-->
         <scene sceneID="bN8-fY-9cB">
@@ -339,6 +339,9 @@
                                         </barButtonItem>
                                     </navigationItem>
                                 </items>
+                                <connections>
+                                    <outlet property="delegate" destination="cew-52-Oht" id="XtG-mv-1KD"/>
+                                </connections>
                             </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -346,11 +349,12 @@
                     <tabBarItem key="tabBarItem" title="Map" id="Cnn-5r-Xri" userLabel="Map"/>
                     <connections>
                         <outlet property="mapView" destination="VSc-6g-cHy" id="JNs-Dd-0XC"/>
+                        <segue destination="b20-G6-CKi" kind="modal" identifier="EditLocation" id="kLo-us-JdJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5Vr-P2-lRX" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="312" y="1101"/>
+            <point key="canvasLocation" x="718" y="1285"/>
         </scene>
         <!--Locations-->
         <scene sceneID="Qn9-MT-20P">
@@ -367,7 +371,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Z2-Uf-ofq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="682" y="535"/>
+            <point key="canvasLocation" x="252" y="535"/>
         </scene>
         <!--Tag-->
         <scene sceneID="Yu6-q3-5Dd">
@@ -450,7 +454,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PN1-11-TbU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="312" y="24"/>
+            <point key="canvasLocation" x="252" y="-202"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="j0f-gi-xtY">
@@ -487,10 +491,10 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7C4-AV-Y6T" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1355" y="237"/>
+            <point key="canvasLocation" x="1190" y="535"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="WPM-7A-vxI"/>
+        <segue reference="kLo-us-JdJ"/>
     </inferredMetricsTieBreakers>
 </document>

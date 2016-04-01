@@ -170,7 +170,7 @@ class LocationDetailsViewController: UITableViewController
     
     //MARK: ***** UITableViewDelegate *****
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath.section == 0 && indexPath.row == 2 {
+        if indexPath.section == 0 && indexPath.row == 0 {
             return 88
         }
         else if indexPath.section == 2 && indexPath.row == 2 {
