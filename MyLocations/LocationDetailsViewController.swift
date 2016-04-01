@@ -20,7 +20,7 @@ class LocationDetailsViewController: UITableViewController
     var date            = NSDate()
     var descriptionText = ""
     
-    
+    var observer:          AnyObject!
     var placemark:         CLPlacemark?
     var managedObjContext: NSManagedObjectContext!
     var locationToEdit:    Location? {
@@ -111,7 +111,7 @@ class LocationDetailsViewController: UITableViewController
     //MARK: ***** METHODS *****
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        listenForBackgroundNotification()
         if let location = locationToEdit {
             title = "Edit Location"
         }
@@ -186,16 +186,33 @@ class LocationDetailsViewController: UITableViewController
         addPhotoLabel.hidden = true
     }
     
+    func listenForBackgroundNotification() {
+        observer = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidEnterBackgroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) { _ in
+            
+            if self.presentedViewController != nil {
+                self.dismissViewControllerAnimated(false, completion: nil)
+            }
+            
+            self.descriptionTextView.resignFirstResponder()
+        }
+    }
+    
     //MARK: ***** UITableViewDelegate *****
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(observer)
+    }
+    
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        if indexPath.section == 0 && indexPath.row == 0 {
+        
+        switch (indexPath.section, indexPath.row)
+        {
+        case (0, 0):
             return 88
-        }
-        else if indexPath.section == 1 {
-            if imageView.hidden { return 44  }
-            else                { return computeSize() }
-        }
-        else if indexPath.section == 2 && indexPath.row == 2 {
+            
+        case (1, _):
+            return imageView.hidden ? 44 : computeSize()
+            
+        case (2, 2):
             addressLabel.frame.size = CGSize(width: view.bounds.size.width - 115, height: 10000)
             
             addressLabel.sizeToFit()
@@ -203,9 +220,11 @@ class LocationDetailsViewController: UITableViewController
             addressLabel.frame.origin.x = view.bounds.size.width - addressLabel.frame.size.width - 15
             
             return addressLabel.frame.size.height + 20
-        } else {
+
+        default:
             return 44
         }
+        
     }
     
     override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
@@ -285,7 +304,7 @@ extension LocationDetailsViewController: UIImagePickerControllerDelegate, UINavi
    func computeSize() -> CGFloat {
     guard let image = image else { return 44 }
         let aspectRatio = image.size.width / image.size.height
-        return 260
+        return 280
     }
     
 }
