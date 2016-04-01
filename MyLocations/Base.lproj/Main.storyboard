@@ -79,6 +79,10 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="GoA-vT-ePJ">
+                                                    <rect key="frame" x="116" y="8" width="171" height="27"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -203,10 +207,12 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="addPhotoLabel" destination="Rzv-3e-3Mp" id="PTd-D2-feJ"/>
                         <outlet property="addressLabel" destination="Sul-VB-k4V" id="cUX-0j-1UP"/>
                         <outlet property="categoryLabel" destination="tCK-F6-ECU" id="kRx-cD-d2M"/>
                         <outlet property="dateLabel" destination="Xe4-4I-fj4" id="8jl-NK-y7e"/>
                         <outlet property="descriptionTextView" destination="lx6-c2-EeP" id="dfE-jR-mIJ"/>
+                        <outlet property="imageView" destination="GoA-vT-ePJ" id="mxc-Br-WhX"/>
                         <outlet property="latitudeLabel" destination="6fR-Fa-uCi" id="Fq3-55-1dP"/>
                         <outlet property="longitudeLabel" destination="0Ly-iC-7Hp" id="P1E-w3-gMF"/>
                     </connections>
@@ -225,7 +231,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="8M7-KE-bwo" style="IBUITableViewCellStyleDefault" id="Kig-j0-hex">
-                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
+                                <rect key="frame" x="0.0" y="92" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Kig-j0-hex" id="DGd-2n-Bm7">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>

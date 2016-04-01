@@ -20,6 +20,7 @@ class LocationDetailsViewController: UITableViewController
     var date            = NSDate()
     var descriptionText = ""
     
+    
     var placemark:         CLPlacemark?
     var managedObjContext: NSManagedObjectContext!
     var locationToEdit:    Location? {
@@ -34,6 +35,13 @@ class LocationDetailsViewController: UITableViewController
         }
     }
     
+    var image: UIImage? {
+        didSet {
+            guard image != nil else { return }
+            showImage(image!)
+        }
+    }
+    
     private let dateFormatter: NSDateFormatter = {
         
         let formatter = NSDateFormatter()
@@ -45,9 +53,11 @@ class LocationDetailsViewController: UITableViewController
     }()
     
     // MARK: ***** OUTLETS *****
+    @IBOutlet weak var imageView:           UIImageView!
     @IBOutlet weak var dateLabel:           UILabel!
     @IBOutlet weak var addressLabel:        UILabel!
     @IBOutlet weak var categoryLabel:       UILabel!
+    @IBOutlet weak var addPhotoLabel:       UILabel!
     @IBOutlet weak var latitudeLabel:       UILabel!
     @IBOutlet weak var longitudeLabel:      UILabel!
     @IBOutlet weak var descriptionTextView: UITextView!
@@ -168,10 +178,22 @@ class LocationDetailsViewController: UITableViewController
         descriptionTextView.resignFirstResponder()    
     }
     
+    
+    func showImage(image: UIImage) {
+        imageView.image      = image
+        imageView.frame      = CGRect(x: 10, y: 10, width: 260, height: 260)
+        imageView.hidden     = false
+        addPhotoLabel.hidden = true
+    }
+    
     //MARK: ***** UITableViewDelegate *****
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         if indexPath.section == 0 && indexPath.row == 0 {
             return 88
+        }
+        else if indexPath.section == 1 {
+            if imageView.hidden { return 44  }
+            else                { return computeSize() }
         }
         else if indexPath.section == 2 && indexPath.row == 2 {
             addressLabel.frame.size = CGSize(width: view.bounds.size.width - 115, height: 10000)
@@ -198,6 +220,11 @@ class LocationDetailsViewController: UITableViewController
         if indexPath.section == 0 && indexPath.row == 0 {
             descriptionTextView.becomeFirstResponder()
         }
+        else if indexPath.section == 1 && indexPath.row == 0 {
+            pickPhoto()
+        }
+        
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
     //MARK: ***** SEGUES *****
@@ -208,3 +235,89 @@ class LocationDetailsViewController: UITableViewController
         }
     }       
 }
+
+extension LocationDetailsViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func pickPhoto() {
+        if UIImagePickerController.isSourceTypeAvailable(.Camera) {
+            showPhotoMenu()
+        } else {
+            choosePhotoFromSource(.PhotoLibrary)
+        }
+    }
+    
+    func showPhotoMenu() {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        
+        let cancelAction      = UIAlertAction(title: "Cancel",              style: .Cancel,  handler: nil)
+        let takePhotoAction   = UIAlertAction(title: "Take Photo",          style: .Default, handler: { _ in self.choosePhotoFromSource(.Camera)       })
+        let fromLibraryAction = UIAlertAction(title: "Choose From Library", style: .Default, handler: { _ in self.choosePhotoFromSource(.PhotoLibrary) })
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(takePhotoAction)
+        alertController.addAction(fromLibraryAction)
+        
+        presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    func choosePhotoFromSource(source: UIImagePickerControllerSourceType) {
+        let imagePicker = UIImagePickerController()
+        
+        imagePicker.delegate      = self
+        imagePicker.allowsEditing = true
+        imagePicker.sourceType    = source
+        
+        presentViewController(imagePicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        
+        image = info[UIImagePickerControllerEditedImage] as? UIImage
+        
+        tableView.reloadData()
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+   func computeSize() -> CGFloat {
+    guard let image = image else { return 44 }
+        let aspectRatio = image.size.width / image.size.height
+        return 260
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
