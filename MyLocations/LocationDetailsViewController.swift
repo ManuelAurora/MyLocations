@@ -82,6 +82,7 @@ class LocationDetailsViewController: UITableViewController
         } else {
             hudView.text = "Tagged"
             location = NSEntityDescription.insertNewObjectForEntityForName("Location", inManagedObjectContext: managedObjContext) as! Location
+            location.photoID = nil
         }
         
         location.date                = date
@@ -90,6 +91,22 @@ class LocationDetailsViewController: UITableViewController
         location.latitude            = coordinate.latitude
         location.longitude           = coordinate.longitude
         location.locationDescription = descriptionTextView.text
+        
+        if let image = image {
+            if !location.hasPhoto {
+                location.photoID = Location.nextPhotoID()
+            }
+            
+            if let data = UIImageJPEGRepresentation(image, 0.5) {
+                
+                do {
+                    print(location.photoPath)
+                    try data.writeToFile(location.photoPath, options: .DataWritingAtomic)
+                } catch {
+                    print("Error writing file: \(error)")
+                }
+            }
+        }        
         
         do {
             try managedObjContext.save()
@@ -111,9 +128,15 @@ class LocationDetailsViewController: UITableViewController
     //MARK: ***** METHODS *****
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         listenForBackgroundNotification()
+        
         if let location = locationToEdit {
             title = "Edit Location"
+            
+            if location.hasPhoto {
+                if let image = location.photoImage { self.image = image }
+            }
         }
         
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(LocationDetailsViewController.hideKeyboard(_:)))
@@ -187,18 +210,21 @@ class LocationDetailsViewController: UITableViewController
     }
     
     func listenForBackgroundNotification() {
-        observer = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidEnterBackgroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) { _ in
+        observer = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidEnterBackgroundNotification, object: nil, queue: NSOperationQueue.mainQueue()) { [weak self] _ in
             
-            if self.presentedViewController != nil {
-                self.dismissViewControllerAnimated(false, completion: nil)
+            guard let strongSelf = self else { return }
+            
+            if strongSelf.presentedViewController != nil {
+                strongSelf.dismissViewControllerAnimated(false, completion: nil)
             }
             
-            self.descriptionTextView.resignFirstResponder()
+            strongSelf.descriptionTextView.resignFirstResponder()
         }
     }
     
     //MARK: ***** UITableViewDelegate *****
     deinit {
+        print("*** deinit")
         NSNotificationCenter.defaultCenter().removeObserver(observer)
     }
     

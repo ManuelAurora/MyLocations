@@ -280,24 +280,29 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="mlW-Uh-hdu">
-                                            <rect key="frame" x="8" y="8" width="304" height="21"/>
+                                            <rect key="frame" x="82" y="8" width="238" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" tag="101" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Address" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9gk-SV-tFZ">
-                                            <rect key="frame" x="8" y="31" width="304" height="17"/>
+                                            <rect key="frame" x="82" y="31" width="238" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.48999999999999999" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="A8U-1G-sTL">
+                                            <rect key="frame" x="15" y="5" width="52" height="52"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                        </imageView>
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="addressLabel" destination="9gk-SV-tFZ" id="Nvw-RM-yzm"/>
                                     <outlet property="descriptionLabel" destination="mlW-Uh-hdu" id="KmW-wn-scK"/>
+                                    <outlet property="photoImage" destination="A8U-1G-sTL" id="Yth-K6-3rt"/>
                                     <segue destination="b20-G6-CKi" kind="modal" identifier="EditLocation" id="WPM-7A-vxI"/>
                                 </connections>
                             </tableViewCell>
@@ -354,7 +359,7 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Map" id="Cnn-5r-Xri" userLabel="Map"/>
                     <connections>
-                        <outlet property="mapView" destination="VSc-6g-cHy" id="JNs-Dd-0XC"/>
+                        <outlet property="mapView" destination="VSc-6g-cHy" id="ulo-ys-DWV"/>
                         <segue destination="b20-G6-CKi" kind="modal" identifier="EditLocation" id="kLo-us-JdJ"/>
                     </connections>
                 </viewController>
@@ -501,6 +506,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="kLo-us-JdJ"/>
+        <segue reference="WPM-7A-vxI"/>
     </inferredMetricsTieBreakers>
 </document>

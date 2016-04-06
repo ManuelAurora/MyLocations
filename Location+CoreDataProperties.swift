@@ -14,8 +14,9 @@ import CoreData
 import CoreLocation
 
 extension Location {
-
+    
     @NSManaged var date:                NSDate
+    @NSManaged var photoID:             NSNumber?
     @NSManaged var latitude:            Double
     @NSManaged var longitude:           Double
     @NSManaged var category:            String

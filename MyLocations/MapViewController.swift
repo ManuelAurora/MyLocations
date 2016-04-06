@@ -27,7 +27,8 @@ class MapViewController: UIViewController
                 queue:  NSOperationQueue.mainQueue()) {
                     notification in
                     
-                    guard let dictionary = notification.userInfo else  { return }
+                    guard self.isViewLoaded()                    else { return }
+                    guard let dictionary = notification.userInfo else { return }
                     
                     if let inserted = dictionary["inserted"] as? NSMutableSet {
                         
@@ -46,8 +47,8 @@ class MapViewController: UIViewController
                         let location = updated.allObjects[0] as! Location
                         guard let oldLocation = self.locations.indexOf(location) else { return }
                         
-                       self.mapView.removeAnnotation(self.locations[oldLocation])
-                       self.mapView.addAnnotation(location)
+                        self.mapView.removeAnnotation(self.locations[oldLocation])
+                        self.mapView.addAnnotation(location)
                     }
             }
         }
@@ -71,6 +72,7 @@ class MapViewController: UIViewController
         super.viewDidLoad()
         
         updateLocations()
+        
         if !locations.isEmpty {
             showLocations()
         }

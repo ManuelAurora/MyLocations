@@ -10,6 +10,8 @@ import UIKit
 
 class LocationCell: UITableViewCell
 {
+    
+    @IBOutlet weak var photoImage:       UIImageView!
     @IBOutlet weak var addressLabel:     UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     
@@ -32,6 +34,17 @@ class LocationCell: UITableViewCell
             addressLabel.text = text
         } else {
             addressLabel.text = String(format: "Lat: %.8f, Long: %.8f", location.latitude, location.longitude)
-        }        
+        }
+        
+        photoImage.image = imageForLocation(location)
     }
+    
+    func imageForLocation(location: Location) -> UIImage {
+        if location.hasPhoto, let image = location.photoImage {
+            return image
+        }
+        
+        return UIImage()
+    }
+    
 }
