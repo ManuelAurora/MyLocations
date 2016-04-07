@@ -233,7 +233,7 @@ class LocationDetailsViewController: UITableViewController
         switch (indexPath.section, indexPath.row)
         {
         case (0, 0):
-            return 88
+            return 110
             
         case (1, _):
             return imageView.hidden ? 44 : computeSize()
@@ -248,7 +248,7 @@ class LocationDetailsViewController: UITableViewController
             return addressLabel.frame.size.height + 20
 
         default:
-            return 44
+            return 55
         }
         
     }
