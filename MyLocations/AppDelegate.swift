@@ -6,6 +6,7 @@
 //  Copyright © 2016 AuroraInterplay. All rights reserved.
 //
 
+import Foundation
 import UIKit
 import CoreData
 
@@ -54,6 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        customizeAppearance()
         listenForFatalCoreDataNotifications()
         
         let tabBarController = window!.rootViewController as! UITabBarController
@@ -122,6 +124,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         } else {
             return rootViewController
         }
+    }
+    
+    func customizeAppearance() {
+        
+        let tintColor = UIColor(red: 255/255.0, green: 238/255.0, blue: 136/255.0, alpha: 1.0)
+        
+        UINavigationBar.appearance().barTintColor        = UIColor.blackColor()
+        UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName: UIColor.whiteColor() ]
+        UITabBar.appearance().barTintColor               = UIColor.blackColor()
+        UITabBar.appearance().tintColor                  = tintColor
     }
 }
 

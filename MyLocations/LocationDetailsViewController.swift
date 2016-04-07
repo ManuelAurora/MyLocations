@@ -124,10 +124,23 @@ class LocationDetailsViewController: UITableViewController
     @IBAction func cancel() {
         dismissViewControllerAnimated(true, completion: nil)
     }
-    
+       
     //MARK: ***** METHODS *****
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.backgroundColor = UIColor.blackColor()
+        tableView.separatorColor  = UIColor(white: 1.0, alpha: 0.2)
+        tableView.indicatorStyle = .White
+        
+        descriptionTextView.textColor       = UIColor.whiteColor()
+        descriptionTextView.backgroundColor = UIColor.blackColor()
+        
+        addPhotoLabel.textColor            = UIColor.whiteColor()
+        addPhotoLabel.highlightedTextColor = addPhotoLabel.textColor
+        
+        addressLabel.textColor            = UIColor(white: 1.0, alpha: 0.4)
+        addressLabel.highlightedTextColor = addressLabel.textColor
         
         listenForBackgroundNotification()
         
@@ -160,33 +173,16 @@ class LocationDetailsViewController: UITableViewController
     
     func stringFromPlacemark(placemark: CLPlacemark) -> String {
         
-        var text = ""
+        var line = ""
         
-        if let s = placemark.subThoroughfare {
-            text += s + " "
-        }
+        line.addText(placemark.subThoroughfare                        )
+        line.addText(placemark.thoroughfare,       withSeparator: " " )
+        line.addText(placemark.locality,           withSeparator: ", ")
+        line.addText(placemark.administrativeArea, withSeparator: ", ")
+        line.addText(placemark.postalCode,         withSeparator: " " )
+        line.addText(placemark.country,            withSeparator: ", ")
         
-        if let s = placemark.thoroughfare {
-            text += s + " "
-        }
-        
-        if let s = placemark.locality {
-            text += s + " "
-        }
-        
-        if let s = placemark.administrativeArea {
-            text += s + " "
-        }
-        
-        if let s = placemark.postalCode {
-            text += s + " "
-        }
-        
-        if let s = placemark.country {
-            text += s
-        }
-        
-        return text
+        return line
     }
     
     func formatDate(date: NSDate) -> String {
@@ -272,6 +268,31 @@ class LocationDetailsViewController: UITableViewController
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
     }
     
+    override func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        cell.backgroundColor = UIColor.blackColor()
+        
+        if let textLabel = cell.textLabel {
+            textLabel.textColor = UIColor.whiteColor()
+        }
+        
+        if let detailLabel = cell.detailTextLabel {
+            detailLabel.textColor            = UIColor(white: 1.0, alpha: 0.4)
+            detailLabel.highlightedTextColor = detailLabel.textColor
+        }
+        
+        if indexPath.row == 2 {
+            let addressLabel = cell.viewWithTag(100) as! UILabel
+            
+            addressLabel.textColor            = UIColor.whiteColor()
+            addressLabel.highlightedTextColor = addressLabel.textColor
+        }
+        
+        let selectionView = UIView(frame: CGRect.zero)
+        
+        selectionView.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+        cell.selectedBackgroundView  = selectionView
+    }
+    
     //MARK: ***** SEGUES *****
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "PickCategory" {
@@ -306,11 +327,12 @@ extension LocationDetailsViewController: UIImagePickerControllerDelegate, UINavi
     }
     
     func choosePhotoFromSource(source: UIImagePickerControllerSourceType) {
-        let imagePicker = UIImagePickerController()
+        let imagePicker = myImagePickerController()
         
-        imagePicker.delegate      = self
-        imagePicker.allowsEditing = true
-        imagePicker.sourceType    = source
+        imagePicker.delegate       = self
+        imagePicker.allowsEditing  = true
+        imagePicker.sourceType     = source
+        imagePicker.view.tintColor = view.tintColor
         
         presentViewController(imagePicker, animated: true, completion: nil)
     }

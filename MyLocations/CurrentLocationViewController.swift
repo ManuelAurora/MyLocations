@@ -9,6 +9,7 @@
 import UIKit
 import CoreLocation
 import CoreData
+import QuartzCore
 
 class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
 {
@@ -22,18 +23,34 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     var managedObjContext:  NSManagedObjectContext!
     var lastLocationError:  NSError?
     var lastGeocodingError: NSError?
-   
     
+    var logoVisible                = false
     var updatingLocation           = false
     var performingReverseGeocoding = false
     
+    lazy var logoButton: UIButton = {
+        let button = UIButton(type: .Custom)
+        
+        button.setBackgroundImage(UIImage(named: "Logo"), forState: .Normal)
+        button.sizeToFit()
+        button.addTarget(self, action: #selector(self.getLocation), forControlEvents: .TouchUpInside)
+        
+        button.center.x =  CGRectGetMidX(self.view.bounds)
+        button.center.y = 220
+        
+        return button
+    }()
+    
     // MARK: ***** OUTLETS *****
-    @IBOutlet weak var tagButton:      UIButton!
-    @IBOutlet weak var getButton:      UIButton!
-    @IBOutlet weak var messageLabel:   UILabel!
-    @IBOutlet weak var addressLabel:   UILabel!
-    @IBOutlet weak var latitudeLabel:  UILabel!
-    @IBOutlet weak var longitudeLabel: UILabel!
+    @IBOutlet weak var containerView:      UIView!
+    @IBOutlet weak var tagButton:          UIButton!
+    @IBOutlet weak var getButton:          UIButton!
+    @IBOutlet weak var messageLabel:       UILabel!
+    @IBOutlet weak var addressLabel:       UILabel!
+    @IBOutlet weak var latitudeLabel:      UILabel!
+    @IBOutlet weak var longitudeLabel:     UILabel!
+    @IBOutlet weak var latitudeTextLabel:  UILabel!
+    @IBOutlet weak var longitudeTextLabel: UILabel!
     
     // MARK: ***** ACTIONS *****
     @IBAction func getLocation() {
@@ -61,6 +78,9 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             
             startLocationManager()
         }
+        
+        if logoVisible { hideLogoView() }
+
         updateLabels()
         configureGetButton()
     }
@@ -72,7 +92,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         updateLabels()
         configureGetButton()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -92,36 +112,25 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         var line1 = ""
         var line2 = ""
         
-        if let s = placemark.subThoroughfare {
-            line1 += s + " "
-        }
+        line1.addText(placemark.subThoroughfare                       )
+        line1.addText(placemark.thoroughfare,       withSeparator: " ")
+        line2.addText(placemark.locality                              )
+        line2.addText(placemark.administrativeArea, withSeparator: " ")
+        line2.addText(placemark.postalCode,         withSeparator: " ")
+        line1.addText(line2, withSeparator: "\n")
         
-        if let s = placemark.thoroughfare {
-            line1 += s
-        }
-        
-        if let s = placemark.locality {
-            line2 += s + " "
-        }
-        
-        if let s = placemark.administrativeArea {
-            line2 += s + " "
-        }
-        
-        if let s = placemark.postalCode {
-            line2 += s
-        }
-        
-        return line1 + "\n" + line2
+        return line1
     }
     
     func updateLabels() {
         if let location = location {
             
-            tagButton.hidden    = false
-            messageLabel.text   = ""
-            latitudeLabel.text  = String(format: "%.8f", location.coordinate.latitude)
-            longitudeLabel.text = String(format: "%.8f", location.coordinate.longitude)
+            tagButton.hidden          = false
+            messageLabel.text         = ""
+            latitudeLabel.text        = String(format: "%.8f", location.coordinate.latitude)
+            longitudeLabel.text       = String(format: "%.8f", location.coordinate.longitude)
+            latitudeTextLabel.hidden  = false
+            longitudeTextLabel.hidden = false
             
             if let placemark = placemark {
                 addressLabel.text = stringFromPlacemark(placemark)
@@ -133,12 +142,14 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                 addressLabel.text = "Error Finding Address"
             } else {
                 addressLabel.text = "No Address Found"
-            }            
+            }
         } else {
-            tagButton.hidden    = true
-            addressLabel.text   = ""
-            latitudeLabel.text  = ""
-            longitudeLabel.text = ""
+            tagButton.hidden          = true
+            addressLabel.text         = ""
+            latitudeLabel.text        = ""
+            longitudeLabel.text       = ""
+            latitudeTextLabel.hidden  = true
+            longitudeTextLabel.hidden = true
             
             var statusMessage: String = ""
             
@@ -153,9 +164,16 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                 statusMessage = "Location Services Disabled"
             }
             else if updatingLocation {
+                
+                UIView.animateWithDuration(0.6, delay: 0, options: .Repeat, animations: {
+                    self.messageLabel.alpha = 0
+                    }, completion: nil)
+                
                 statusMessage = "Searching..."
+                
             } else {
-                messageLabel.text = "Tap 'Get My Location' to Start"
+                statusMessage = ""
+                showLogoView()
             }
             
             messageLabel.text = statusMessage
@@ -207,6 +225,22 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         configureGetButton()
     }
     
+    func showLogoView() {
+        guard !logoVisible else { return }
+        
+        logoVisible          = true
+        containerView.hidden = true
+        
+        view.addSubview(logoButton)
+    }
+    
+    func hideLogoView() {
+        guard !logoVisible else { return }
+        
+        logoVisible          = false
+        containerView.hidden = false
+    }
+    
     // MARK: ***** DELEGATE FUNCS *****
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
         print("didFailWithError\(error)")
@@ -222,7 +256,6 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         updateLabels()
         configureGetButton()
         stopLocationManager()
-       
     }
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -265,7 +298,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             
             geocoder.reverseGeocodeLocation(newLocation, completionHandler: {
                 (placemarks, error) in
-                                              
+                
                 self.lastLocationError = error
                 if error == nil, let p = placemarks where !p.isEmpty {
                     self.placemark = p.last!
