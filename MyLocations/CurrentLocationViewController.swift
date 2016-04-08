@@ -10,10 +10,13 @@ import UIKit
 import CoreLocation
 import CoreData
 import QuartzCore
+import AudioToolbox
 
 class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
 {
     // MARK: ***** PROPERTIES *****
+    var soundID: SystemSoundID = 0
+    
     let geocoder        = CLGeocoder()
     let locationManager = CLLocationManager()
     
@@ -89,6 +92,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        loadSoundEffect("Sound.caf")
         updateLabels()
         configureGetButton()
     }
@@ -205,11 +209,32 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     }
     
     func configureGetButton() {
+        let spinnerTag = 1000
+        
         if updatingLocation {
             getButton.setTitle("Stop", forState: .Normal)
+            
+            if view.viewWithTag(spinnerTag) == nil {
+                let spinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
+                
+                spinner.center    = messageLabel.center
+                spinner.center.y += spinner.bounds.size.height / 2 + 15
+                spinner.tag       = spinnerTag
+                
+                spinner.startAnimating()
+                
+                containerView.addSubview(spinner)
+            }
+            
         } else {
             getButton.setTitle("Get My Location", forState: .Normal)
+            
+            guard let spinner = view.viewWithTag(spinnerTag) else { return }
+            
+            spinner.removeFromSuperview()
         }
+        
+        
     }
     
     func didTimeOut() {
@@ -235,10 +260,56 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     }
     
     func hideLogoView() {
-        guard !logoVisible else { return }
+        guard logoVisible else { return }
         
-        logoVisible          = false
-        containerView.hidden = false
+        logoVisible            = false
+        containerView.hidden   = false
+        containerView.center.x = view.bounds.size.width * 2
+        containerView.center.y = 40 + containerView.bounds.size.height / 2
+        
+        let centerX    = CGRectGetMidX(view.bounds)
+        let panelMover = CABasicAnimation(keyPath: "position")
+        
+        panelMover.fillMode            = kCAFillModeForwards
+        panelMover.duration            = 0.6
+        panelMover.fromValue           = NSValue(CGPoint: containerView.center)
+        panelMover.removedOnCompletion = false
+        panelMover.toValue             = NSValue(CGPoint: CGPoint(x: centerX, y: containerView.center.y))
+        panelMover.timingFunction      = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+        panelMover.delegate            = self
+        
+        containerView.layer.addAnimation(panelMover, forKey: "panelMover")
+        
+        let logoMover = CABasicAnimation(keyPath: "position")
+        
+        logoMover.removedOnCompletion = false
+        logoMover.fillMode            = kCAFillModeForwards
+        logoMover.duration            = 0.5
+        logoMover.fromValue           = NSValue(CGPoint: logoButton.center)
+        logoMover.toValue             = NSValue(CGPoint: CGPoint(x: -centerX, y: logoButton.center.y))
+        logoMover.timingFunction      = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+        
+        logoButton.layer.addAnimation(logoMover, forKey: "logoMover")
+        
+        let logoRotator = CABasicAnimation(keyPath: "transform.rotation.z")
+        
+        logoRotator.removedOnCompletion = false
+        logoRotator.fillMode            = kCAFillModeForwards
+        logoRotator.duration            = 0.5
+        logoRotator.fromValue           = 0.0
+        logoRotator.toValue             = -2 * M_PI
+        logoRotator.timingFunction      = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
+        
+        logoButton.layer.addAnimation(logoRotator, forKey: "logoRotator")
+    }
+    
+    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
+        containerView.layer.removeAllAnimations()
+        containerView.center.x = view.bounds.size.width / 2
+        containerView.center.y = 40 + containerView.bounds.size.height / 2
+        
+        logoButton.layer.removeAllAnimations()
+        logoButton.removeFromSuperview()
     }
     
     // MARK: ***** DELEGATE FUNCS *****
@@ -301,6 +372,8 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                 
                 self.lastLocationError = error
                 if error == nil, let p = placemarks where !p.isEmpty {
+                    if self.placemark == nil { self.playSoundEffect() }
+                    
                     self.placemark = p.last!
                 } else {
                     self.placemark = nil
@@ -335,6 +408,25 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             controller.coordinate           = location!.coordinate
             controller.managedObjContext = managedObjContext
         }
+    }
+    
+    //MARK: *** Sound Effect ***
+    func loadSoundEffect(name: String) {
+        guard let path = NSBundle.mainBundle().pathForResource(name, ofType: nil) else { return }
+        
+        let fileURL = NSURL.fileURLWithPath(path, isDirectory: false)
+        let error   = AudioServicesCreateSystemSoundID(fileURL, &soundID)
+        
+        if error != kAudioServicesNoError { print("Error code \(error)") }
+    }
+    
+    func unloadSoundEffect() {
+        AudioServicesDisposeSystemSoundID(soundID)
+        soundID = 0
+    }
+    
+    func playSoundEffect() {
+        AudioServicesPlaySystemSound(soundID)
     }
 }
 
